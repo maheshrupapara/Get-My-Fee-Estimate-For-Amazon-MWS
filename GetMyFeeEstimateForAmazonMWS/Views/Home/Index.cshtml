@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row" style="margin-top:5%">
+    <div class="form-group col-md-4">
+        <label>Enter ASIN</label>
+        <input type="text" class="form-control" id="asin" />
+    </div>
+</div>
+<div class="row">
+    <div class="form-group col-md-4">
+        <input type="button" class="btn btn-success" id="calculate" value="Calculate Fees" />
+    </div>
+</div>
+<hr />
+<script>
+    $(document).on("click", "#calculate", function () {
+        if ($('#asin').val() == "") {
+            alert("ASIN is required");
+            $('#asin').focus();
+            return;
+        }
+        else {
+            showLoader();
+            $.ajax({
+                url: getUrl() + '/Home/GetFeeEstimateData',
+                type: 'POST',
+                data: { 'ASIN': $('#asin').val() },
+                success: function (res) {
+                    hideLoader();
+                    if (res.result)
+                        alert("FBA Fee is " + res.fee + " " + res.currency);
+                    else
+                        alert("Something went wrong. Please contact administrator");
+                },
+                error: function (err) {
+                    hideLoader();
+                    alert(err);
+                }
+            });
+        }
+    });
+</script>
